@@ -27,16 +27,9 @@ do
   HOST_ID="$(zerotier-cli info | awk '{print $3}')"
 
   curl -s -XPOST \
-    -H "Authorization: Bearer $ZTAUTHTOKEN" \
-    -d '{"hidden":"false","config":{"authorized":true}}' \
-    "https://$ZT_MOON/network/$NETWORK_ID/member/$HOST_ID"
-
-  echo "Set hostname"
-
-  curl -s -XPOST \
-    -H "Authorization: Bearer $ZTAUTHTOKEN" \
-    -d "{\"name\":\"$ZTHOSTNAME\"}" \
-    "https://$ZT_MOON/network/$NETWORK_ID/member/$HOST_ID"
+    -H "x-zt1-auth: $ZTAUTHTOKEN" \
+    -d "{\"name\":\"$ZTHOSTNAME\", \"ipAssignments\":[\"$ZT_NODE_IP\"], \"authorized\":true}" \
+    "http://$ZT_MOON/controller/network/$NETWORK_ID/member/$HOST_ID"
 
   echo "\nDone \n"
 done
