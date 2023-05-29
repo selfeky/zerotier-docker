@@ -37,16 +37,17 @@ zerotier-cli join $NETWORK_ID
 
 echo "Auto accept the new client"
 HOST_ID="$(zerotier-cli info | awk '{print $3}')"
-echo $HOST_ID
 
 curl -s -XPOST \
   -H "Authorization: Bearer $ZTAUTHTOKEN" \
   -d '{"hidden":"false","config":{"authorized":true}}' \
-  "https://my.zerotier.com/api/v1/network/$NETWORK_ID/member/$HOST_ID"
+  "https://$ZT_MOON/network/$NETWORK_ID/member/$HOST_ID"
 
 echo "Set hostname"
 
 curl -s -XPOST \
   -H "Authorization: Bearer $ZTAUTHTOKEN" \
   -d "{\"name\":\"$ZTHOSTNAME\"}" \
-  "https://my.zerotier.com/api/v1/network/$NETWORK_ID/member/$HOST_ID"
+  "https://$ZT_MOON/network/$NETWORK_ID/member/$HOST_ID"
+
+echo "\nDone \n"
