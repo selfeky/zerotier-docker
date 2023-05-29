@@ -28,6 +28,7 @@ LABEL org.opencontainers.image.title="zerotier" \
       org.opencontainers.image.source="https://github.com/zyclonite/zerotier-docker"
 
 COPY --from=builder /src/zerotier-one /scripts/entrypoint.sh /usr/sbin/
+COPY --from=builder /src/zerotier-one /scripts/join.sh /usr/sbin/
 
 RUN apk add --no-cache --purge --clean-protected libc6-compat libstdc++ curl \
   && mkdir -p /var/lib/zerotier-one \
