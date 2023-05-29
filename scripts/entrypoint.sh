@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env sh
 # set -eu
 
 if [ ! -e /dev/net/tun ]; then
