@@ -27,8 +27,10 @@ LABEL org.opencontainers.image.title="zerotier" \
       org.opencontainers.image.licenses="MIT" \
       org.opencontainers.image.source="https://github.com/zyclonite/zerotier-docker"
 
-COPY --from=builder /src/zerotier-one /scripts/entrypoint.sh /usr/sbin/
-COPY --from=builder /scripts/supervisor-zerotier.conf /etc/supervisor/supervisord.conf
+COPY --from=builder /src/zerotier-one /usr/sbin/
+
+COPY /scripts/supervisor-zerotier.conf /etc/supervisor/supervisord.conf
+COPY /scripts/entrypoint.sh /etc/supervisor/supervisord.conf
 
 RUN apk add --no-cache --purge --clean-protected libc6-compat libstdc++ curl supervisor \
   && mkdir -p /var/lib/zerotier-one \
