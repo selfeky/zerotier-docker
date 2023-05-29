@@ -31,6 +31,6 @@ if [ "$ZT_OVERRIDE_LOCAL_CONF" = 'true' ] || [ ! -f "/var/lib/zerotier-one/local
   }" > /var/lib/zerotier-one/local.conf
 fi
 
-exec "$@"
+zerotier-one -q join $NETWORK_ID
 
-exec ./join.sh
+exec "$@"
