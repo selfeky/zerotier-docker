@@ -11,7 +11,7 @@ COPY patches /patches
 COPY scripts /scripts
 
 RUN apk add --update alpine-sdk linux-headers openssl-dev \
-  && git clone --quiet https://github.com/zerotier/ZeroTierOne.git /src \
+  && git clone --quiet https://github.com/selfeky/zerotier-docker /src \
   && git -C src reset --quiet --hard ${ZT_COMMIT} \
   && cd /src \
   && git apply /patches/* \
@@ -25,7 +25,7 @@ LABEL org.opencontainers.image.title="zerotier" \
       org.opencontainers.image.version="${ZT_VERSION}" \
       org.opencontainers.image.description="ZeroTier One as Docker Image" \
       org.opencontainers.image.licenses="MIT" \
-      org.opencontainers.image.source="https://github.com/zyclonite/zerotier-docker"
+      org.opencontainers.image.source="https://github.com/selfeky/zerotier-docker"
 
 COPY --from=builder /src/zerotier-one /scripts/entrypoint.sh /usr/sbin/
 
