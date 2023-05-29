@@ -11,7 +11,7 @@ COPY patches /patches
 COPY scripts /scripts
 
 RUN apk add --update alpine-sdk linux-headers openssl-dev \
-  apk add curl \
+  && apk add curl \
   && git clone --quiet https://github.com/zerotier/ZeroTierOne.git /src \
   && git -C src reset --quiet --hard ${ZT_COMMIT} \
   && cd /src \
