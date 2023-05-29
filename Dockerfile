@@ -3,7 +3,7 @@ ARG ALPINE_VERSION=edge
 ARG ZT_COMMIT=d831fd10d5d1a9acb46f07d9548a96fc73a23d72
 ARG ZT_VERSION=1.10.6
 
-FROM ${ALPINE_IMAGE}:${ALPINE_VERSION} as builder
+FROM ${ALPINE_IMAGE}:${ALPINE_VERSION} AS builder
 
 ARG ZT_COMMIT
 
@@ -38,6 +38,6 @@ RUN apk add --no-cache --purge --clean-protected libc6-compat libstdc++ curl sup
 
 EXPOSE 9993/udp
 
-ENTRYPOINT ["entrypoint.sh"]
+ENTRYPOINT ["/usr/sbin/entrypoint.sh"]
 
 # CMD ["-U"]
