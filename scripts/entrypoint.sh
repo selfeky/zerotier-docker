@@ -31,8 +31,6 @@ if [ "$ZT_OVERRIDE_LOCAL_CONF" = 'true' ] || [ ! -f "/var/lib/zerotier-one/local
   }" > /var/lib/zerotier-one/local.conf
 fi
 
-exec "$@"
-
 zerotier-cli join $NETWORK_ID
 
 echo "Auto accept the new client"
@@ -44,3 +42,5 @@ curl -s -XPOST \
   "http://$ZT_MOON/controller/network/$NETWORK_ID/member/$HOST_ID"
 
 echo "\nDone \n"
+
+exec "$@"
