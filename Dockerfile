@@ -30,7 +30,7 @@ LABEL org.opencontainers.image.title="zerotier" \
 COPY --from=builder /src/zerotier-one /usr/sbin/
 
 COPY /scripts/supervisor-zerotier.conf /etc/supervisor/supervisord.conf
-COPY /scripts/entrypoint.sh /usr/sbin
+COPY /scripts/entrypoint.sh /usr/sbin/
 
 RUN apk add --no-cache --purge --clean-protected libc6-compat libstdc++ curl supervisor \
   && mkdir -p /var/lib/zerotier-one \
