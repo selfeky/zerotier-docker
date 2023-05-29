@@ -1,36 +1,44 @@
-#!/usr/bin/env sh
-set -Eeo pipefail
+#!/bin/bash
+# set -eu
 
-if [ "${1:0:1}" = '-' ]; then
-	set -- zerotier-one "$@"
+if [ ! -e /dev/net/tun ]; then
+  echo 'FATAL: cannot start ZeroTier One in container: /dev/net/tun not present.'
+  exit 1
 fi
 
-DEFAULT_PRIMARY_PORT=9993
-DEFAULT_PORT_MAPPING_ENABLED=true
-DEFAULT_ALLOW_TCP_FALLBACK_RELAY=true
+echo "Starting..."
+#zerotier-one
+supervisord -c /etc/supervisor/supervisord.conf
 
-MANAGEMENT_NETWORKS=""
-if [ ! -z "$ZT_ALLOW_MANAGEMENT_FROM" ]; then
-  for NETWORK in ${ZT_ALLOW_MANAGEMENT_FROM//,/$IFS}; do
-    if [ -n "$MANAGEMENT_NETWORKS" ]; then
-      MANAGEMENT_NETWORKS="${MANAGEMENT_NETWORKS},"
-    fi
-    MANAGEMENT_NETWORKS="${MANAGEMENT_NETWORKS}\"${NETWORK}\""
-  done
-fi
+sleep 10
+echo "joining..."
+zerotier-cli join $NETWORK_ID
 
-if [ "$ZT_OVERRIDE_LOCAL_CONF" = 'true' ] || [ ! -f "/var/lib/zerotier-one/local.conf" ]; then
-  echo "{
-    \"settings\": {
-        \"primaryPort\": ${ZT_PRIMARY_PORT:-$DEFAULT_PRIMARY_PORT},
-        \"portMappingEnabled\": ${ZT_PORT_MAPPING_ENABLED:-$DEFAULT_PORT_MAPPING_ENABLED},
-        \"softwareUpdate\": \"disable\",
-        \"allowManagementFrom\": [${MANAGEMENT_NETWORKS}],
-        \"allowTcpFallbackRelay\": ${ZT_ALLOW_TCP_FALLBACK_RELAY:-$DEFAULT_ALLOW_TCP_FALLBACK_RELAY}
-    }
-  }" > /var/lib/zerotier-one/local.conf
-fi
+IP_OK=0
+while [ $IP_OK -lt 1 ]
+do
+  ZTDEV=$( ip addr | grep -i zt | grep -i mtu | awk '{ print $2 }' | cut -f1 -d':' | tail -1 )
+  IP_OK=$( ip addr show dev $ZTDEV | grep -i inet | wc -l )
+  sleep 10
 
-zerotier-one -q join $NETWORK_ID
+  echo $IP_OK
 
-exec "$@"
+  echo "Auto accept the new client"
+  HOST_ID="$(zerotier-cli info | awk '{print $3}')"
+
+  curl -s -XPOST \
+    -H "Authorization: Bearer $ZTAUTHTOKEN" \
+    -d '{"hidden":"false","config":{"authorized":true}}' \
+    "https://$ZT_MOON/network/$NETWORK_ID/member/$HOST_ID"
+
+  echo "Set hostname"
+
+  curl -s -XPOST \
+    -H "Authorization: Bearer $ZTAUTHTOKEN" \
+    -d "{\"name\":\"$ZTHOSTNAME\"}" \
+    "https://$ZT_MOON/network/$NETWORK_ID/member/$HOST_ID"
+
+  echo "\nDone \n"
+done
+
+tail -f /dev/null
