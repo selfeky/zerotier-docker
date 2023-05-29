@@ -10,7 +10,7 @@ ARG ZT_COMMIT
 COPY patches /patches
 COPY scripts /scripts
 
-RUN apk update && apk add curl && apk add --update alpine-sdk linux-headers openssl-dev \ 
+RUN apk add --update alpine-sdk linux-headers openssl-dev \ 
   && git clone --quiet https://github.com/zerotier/ZeroTierOne.git /src \
   && git -C src reset --quiet --hard ${ZT_COMMIT} \
   && cd /src \
@@ -29,7 +29,7 @@ LABEL org.opencontainers.image.title="zerotier" \
 
 COPY --from=builder /src/zerotier-one /scripts/entrypoint.sh /usr/sbin/
 
-RUN apk add --no-cache --purge --clean-protected libc6-compat libstdc++ \
+RUN apk add --no-cache --purge --clean-protected libc6-compat libstdc++ curl \
   && mkdir -p /var/lib/zerotier-one \
   && ln -s /usr/sbin/zerotier-one /usr/sbin/zerotier-idtool \
   && ln -s /usr/sbin/zerotier-one /usr/sbin/zerotier-cli \
