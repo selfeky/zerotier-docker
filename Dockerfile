@@ -31,6 +31,7 @@ COPY --from=builder /src/zerotier-one /usr/sbin/
 
 COPY /scripts/supervisor-zerotier.conf /etc/supervisor/supervisord.conf
 COPY /scripts/entrypoint.sh /entrypoint.sh
+COPY /scripts/exitpoint.sh /exitpoint.sh
 
 RUN apk add --no-cache --purge --clean-protected libc6-compat libstdc++ curl supervisor \
   && mkdir -p /var/lib/zerotier-one \
